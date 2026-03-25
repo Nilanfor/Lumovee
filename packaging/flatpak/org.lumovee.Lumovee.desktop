@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Lumovee
+Comment=Route Hyperion/HyperHDR to Govee LED strips
+Exec=lumovee
+Icon=org.lumovee.Lumovee
+Type=Application
+Categories=Utility;
+Keywords=govee;led;hyperion;hyperhdr;ambient;
+StartupNotify=false

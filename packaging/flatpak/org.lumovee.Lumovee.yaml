@@ -1,0 +1,69 @@
+app-id: org.lumovee.Lumovee
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.python3
+
+command: lumovee
+
+finish-args:
+  # Network access for LAN device discovery and UDP control
+  - --share=network
+  # Display
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --env=QT_QPA_PLATFORM=wayland;xcb
+  # System tray support
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --talk-name=org.freedesktop.Notifications
+  # Persistent settings storage
+  - --filesystem=home/.config/Lumovee:create
+
+build-options:
+  append-path: /usr/lib/sdk/python3/bin
+  env:
+    PIP_PREFIX: /app
+    PIP_DISABLE_PIP_VERSION_CHECK: '1'
+
+modules:
+  # ── Python dependencies ────────────────────────────────────────────────────
+  # PySide6 and its dependencies are installed via pip.
+  # For a reproducible offline build, generate a pinned requirements manifest:
+  #   flatpak-pip-generator --runtime org.freedesktop.Sdk//24.08 \
+  #                         --sdk-extension python3 PySide6
+  # and replace this simple-commands block with the generated JSON include.
+  - name: python3-PySide6
+    buildsystem: simple
+    build-commands:
+      - pip3 install --no-index --find-links=. PySide6
+    sources:
+      # Download PySide6 wheel beforehand and reference it here, e.g.:
+      # - type: file
+      #   url: https://files.pythonhosted.org/packages/.../PySide6-6.x.x-cp312-...whl
+      #   sha256: <hash>
+      []
+
+  # ── Application ────────────────────────────────────────────────────────────
+  - name: lumovee
+    buildsystem: simple
+    build-commands:
+      # Install application source
+      - install -dm755 /app/lib/lumovee
+      - cp src/ui.py /app/lib/lumovee/
+      - cp -r src/govee /app/lib/lumovee/
+      # Wrapper script so flatpak run resolves the module path correctly
+      - |
+        install -Dm755 /dev/stdin /app/bin/lumovee << 'EOF'
+        #!/bin/sh
+        exec python3 /app/lib/lumovee/ui.py "$@"
+        EOF
+      # Desktop entry
+      - install -Dm644 packaging/flatpak/org.lumovee.Lumovee.desktop \
+            /app/share/applications/org.lumovee.Lumovee.desktop
+      # AppStream metadata
+      - install -Dm644 packaging/flatpak/org.lumovee.Lumovee.metainfo.xml \
+            /app/share/metainfo/org.lumovee.Lumovee.metainfo.xml
+    sources:
+      - type: dir
+        path: ../..

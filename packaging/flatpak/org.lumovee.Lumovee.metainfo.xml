@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.lumovee.Lumovee</id>
+  <name>Lumovee</name>
+  <summary>Route Hyperion/HyperHDR to Govee LED strips</summary>
+  <description>
+    <p>
+      Lumovee is a system-tray application that bridges Hyperion or HyperHDR
+      to Govee LED strips over the local network, enabling ambient bias lighting
+      driven by your own screen-capture software.
+    </p>
+  </description>
+  <url type="homepage">https://github.com/nilsandre/lumovee</url>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="1.0" date="2026-01-01"/>
+  </releases>
+</component>
