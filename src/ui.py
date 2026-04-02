@@ -520,7 +520,7 @@ class RouterWorker(QThread):
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 4 * 1024 * 1024)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 512 * 1024)
         sock.bind(("0.0.0.0", self._port))
         sock.settimeout(0.1)
 
@@ -556,6 +556,9 @@ class RouterWorker(QThread):
 
                 try:
                     set_segments_razer(self._ip, leds)
+                except OSError:
+                    # Transient OS buffer error (e.g. WSAENOBUFS) — drop frame, keep going.
+                    continue
                 except Exception as e:
                     self.error.emit(str(e))
                     break

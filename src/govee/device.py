@@ -22,10 +22,29 @@ _MULTICAST = "239.255.255.250"
 
 # --- Transport ---
 
+_cmd_sock: socket.socket | None = None
+
+
+def _get_cmd_sock() -> socket.socket:
+    global _cmd_sock
+    if _cmd_sock is None:
+        _cmd_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return _cmd_sock
+
+
 def _send(ip: str, cmd: str, data: dict):
+    global _cmd_sock
     msg = json.dumps({"msg": {"cmd": cmd, "data": data}}).encode()
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.sendto(msg, (ip, _CMD_PORT))
+    try:
+        _get_cmd_sock().sendto(msg, (ip, _CMD_PORT))
+    except OSError:
+        # Socket may be stale (e.g. WSAENOBUFS on Windows); recreate and retry once.
+        try:
+            _cmd_sock.close()
+        except Exception:
+            pass
+        _cmd_sock = None
+        _get_cmd_sock().sendto(msg, (ip, _CMD_PORT))
 
 
 def _xor(data: bytes) -> int:
