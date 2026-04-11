@@ -1121,15 +1121,23 @@ class MainWindow(QMainWindow):
             # Safe to clear flag now — combo is fully settled
             self._scanning = False
 
-            # Fetch live status for each device to populate bulbs + sliders
-            self._status_fetcher = StatusFetcher([d["ip"] for d in devices])
-            self._status_fetcher.status_ready.connect(self._on_status_ready)
-            self._status_fetcher.start()
-
             # Auto-start routing on launch (once only, never while already routing)
-            if not routing_active and self._settings.value("routing_active", False, type=bool) and not self._auto_route_done:
+            will_auto_route = (
+                not routing_active
+                and self._settings.value("routing_active", False, type=bool)
+                and not self._auto_route_done
+            )
+            if will_auto_route:
                 self._auto_route_done = True
                 self._start()
+
+            # Fetch live status — skip any device currently being routed so that
+            # a devStatus command doesn't knock it out of DreamView mode.
+            routed_ip = self._worker._ip if (self._worker and self._worker.isRunning()) else None
+            status_ips = [d["ip"] for d in devices if d["ip"] != routed_ip]
+            self._status_fetcher = StatusFetcher(status_ips)
+            self._status_fetcher.status_ready.connect(self._on_status_ready)
+            self._status_fetcher.start()
         else:
             self._scanning = False
             if not routing_active:
