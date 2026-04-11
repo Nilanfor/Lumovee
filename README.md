@@ -4,7 +4,7 @@ A lightweight cross-platform system-tray app that bridges [Hyperion](https://hyp
 
 Hyperion/HyperHDR capture your screen and send the resulting per-LED colors as **UDP Raw** frames. Lumovee receives those frames and forwards them to a Govee device using the Govee LAN API (Razer/DreamView protocol), giving you ambient bias lighting driven by your own capture software.
 
-## Disclaimer: This application currently is mostly vibe-coded as a Proof of Concept prototype, but is nevertheless fully functional and has all described features. I just put it up so that is might be helpful for anyone also in need of a solution for their DreamView devices on Linux, or willing to build an app based on the reverse-engineered UDP package format. If there is more interest, I will fully refactor the codebase and continue developing new features. 
+## Disclaimer: This application currently is mostly vibe-coded as a Proof of Concept prototype, but is nevertheless fully functional and has all described features. I just put it up so that it might be helpful for anyone also in need of a solution for their DreamView devices on Linux; or willing to build another app based on the reverse-engineered Govee UDP package format. If there is more interest, I will fully refactor the codebase and continue developing new features. 
 
 ## Features
 
