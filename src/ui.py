@@ -513,6 +513,8 @@ class RouterWorker(QThread):
         self._running = True
         try:
             turn_on(self._ip)
+            razer_stop(self._ip)   # reset to idle so razer_start gets a clean transition
+            time.sleep(0.15)
             razer_start(self._ip)
         except Exception as e:
             self.error.emit(f"Start failed: {e}")
