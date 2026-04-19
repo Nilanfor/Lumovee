@@ -1,10 +1,13 @@
 # Lumovee
 
-A lightweight cross-platform system-tray app that bridges [Hyperion](https://hyperion-project.org/) / [HyperHDR](https://github.com/awawa-dev/HyperHDR) to Govee LED strips over the local network and allows for basic device control.
+A lightweight cross-platform system-tray app that bridges [Hyperion](https://hyperion-project.org/) / [HyperHDR](https://github.com/awawa-dev/HyperHDR) to DreamView-compatible Govee LED strips over the local network and allows for basic device control.
 
 Hyperion/HyperHDR capture your screen and send the resulting per-LED colors as **UDP Raw** frames. Lumovee receives those frames and forwards them to a Govee device using the Govee LAN API (Razer/DreamView protocol), giving you ambient bias lighting driven by your own capture software.
 
-## Disclaimer: The application right now is mostly vibe-coded as a Proof of Concept prototype, but is as of right now fully functional with all advertised features. It will get a full Kirigami-based refactor by me in the future.
+## Disclaimer: ##
+This application currently is mostly vibe-coded as a Proof of Concept prototype, but is nevertheless fully functional and has all described features. I just put it up so that it might be helpful for anyone also in need of a solution for their DreamView devices on Linux; or willing to build another app based on the reverse-engineered Govee UDP package format. 
+
+If there is more interest, I will fully refactor the codebase and continue developing new features. 
 
 ## Features
 
@@ -14,6 +17,12 @@ Hyperion/HyperHDR capture your screen and send the resulting per-LED colors as *
 - Settings tab: optional autostart with the system
 - Routing state is restored automatically on next launch
 - Minimises to the system tray
+
+## Tested Setups
+
+| Govee Device | CachyOS | Windows |
+| ------------ | ------- | ------- |
+| G1           | ✅      | ✅      |
 
 ## Requirements
 
