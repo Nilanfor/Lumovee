@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Dark rounded background -->
+  <rect width="100" height="100" rx="22" fill="#1E1E2E"/>
+  <!-- Vertical bar of the L -->
+  <rect x="14" y="48" width="22" height="38" rx="8" fill="#FFFFFF"/>
+  <!-- Horizontal bar of the L -->
+  <rect x="14" y="64" width="72" height="22" rx="8" fill="#FFFFFF"/>
+  <!-- Bulb at top of the L -->
+  <circle cx="25" cy="30" r="16" fill="#FFFFFF"/>
+</svg>

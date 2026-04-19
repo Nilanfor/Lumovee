@@ -1,9 +1,7 @@
 app-id: org.lumovee.Lumovee
-runtime: org.freedesktop.Platform
-runtime-version: '24.08'
-sdk: org.freedesktop.Sdk
-sdk-extensions:
-  - org.freedesktop.Sdk.Extension.python3
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
 
 command: lumovee
 
@@ -14,35 +12,32 @@ finish-args:
   - --socket=fallback-x11
   - --socket=wayland
   - --env=QT_QPA_PLATFORM=wayland;xcb
+  - --env=QT_QPA_PLATFORMTHEME=xdgdesktopportal
   # System tray support
   - --talk-name=org.kde.StatusNotifierWatcher
+  - --talk-name=com.canonical.StatusNotifierWatcher
   - --talk-name=org.freedesktop.Notifications
   # Persistent settings storage
   - --filesystem=home/.config/Lumovee:create
 
 build-options:
-  append-path: /usr/lib/sdk/python3/bin
   env:
     PIP_PREFIX: /app
     PIP_DISABLE_PIP_VERSION_CHECK: '1'
 
 modules:
   # ── Python dependencies ────────────────────────────────────────────────────
-  # PySide6 and its dependencies are installed via pip.
-  # For a reproducible offline build, generate a pinned requirements manifest:
-  #   flatpak-pip-generator --runtime org.freedesktop.Sdk//24.08 \
-  #                         --sdk-extension python3 PySide6
-  # and replace this simple-commands block with the generated JSON include.
+  # PySide6 is fetched at build time via pip (network access enabled for this
+  # module only). Uses the Python 3 bundled with org.freedesktop.Sdk//25.08.
   - name: python3-PySide6
     buildsystem: simple
+    build-options:
+      build-args:
+        - --share=network
     build-commands:
-      - pip3 install --no-index --find-links=. PySide6
-    sources:
-      # Download PySide6 wheel beforehand and reference it here, e.g.:
-      # - type: file
-      #   url: https://files.pythonhosted.org/packages/.../PySide6-6.x.x-cp312-...whl
-      #   sha256: <hash>
-      []
+      - python3 -m ensurepip
+      - python3 -m pip install PySide6
+    sources: []
 
   # ── Application ────────────────────────────────────────────────────────────
   - name: lumovee
@@ -56,14 +51,24 @@ modules:
       - |
         install -Dm755 /dev/stdin /app/bin/lumovee << 'EOF'
         #!/bin/sh
-        exec python3 /app/lib/lumovee/ui.py "$@"
+        # Locate python3 — prefer the runtime's /usr/bin, fall back to PATH
+        PYTHON=/usr/bin/python3
+        [ -x "$PYTHON" ] || PYTHON=$(command -v python3 2>/dev/null) || {
+            echo "lumovee: python3 not found" >&2
+            exit 1
+        }
+        # Ensure pip-installed packages in /app are on the path
+        # Cover both Python minor versions across SDK releases
+        for d in /app/lib/python3.*/site-packages; do
+            [ -d "$d" ] && PYTHONPATH="$d${PYTHONPATH:+:$PYTHONPATH}"
+        done
+        export PYTHONPATH
+        exec "$PYTHON" /app/lib/lumovee/ui.py "$@"
         EOF
-      # Desktop entry
-      - install -Dm644 packaging/flatpak/org.lumovee.Lumovee.desktop \
-            /app/share/applications/org.lumovee.Lumovee.desktop
-      # AppStream metadata
-      - install -Dm644 packaging/flatpak/org.lumovee.Lumovee.metainfo.xml \
-            /app/share/metainfo/org.lumovee.Lumovee.metainfo.xml
+      - install -Dm644 packaging/flatpak/org.lumovee.Lumovee.svg /app/share/icons/hicolor/scalable/apps/org.lumovee.Lumovee.svg
+      - install -Dm644 packaging/flatpak/org.lumovee.Lumovee.svg /app/share/app-info/icons/hicolor/scalable/apps/org.lumovee.Lumovee.svg
+      - install -Dm644 packaging/flatpak/org.lumovee.Lumovee.desktop /app/share/applications/org.lumovee.Lumovee.desktop
+      - install -Dm644 packaging/flatpak/org.lumovee.Lumovee.metainfo.xml /app/share/metainfo/org.lumovee.Lumovee.metainfo.xml
     sources:
       - type: dir
         path: ../..

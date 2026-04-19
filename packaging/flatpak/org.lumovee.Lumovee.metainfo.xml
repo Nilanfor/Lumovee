@@ -10,6 +10,10 @@
       driven by your own screen-capture software.
     </p>
   </description>
+  <icon type="stock">org.lumovee.Lumovee</icon>
+  <categories>
+    <category>Utility</category>
+  </categories>
   <url type="homepage">https://github.com/nilsandre/lumovee</url>
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>

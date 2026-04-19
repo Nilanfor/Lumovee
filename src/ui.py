@@ -751,6 +751,37 @@ class MainWindow(QMainWindow):
         dev_row.addWidget(QLabel("Device"))
         self._combo = QComboBox()
         self._combo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self._combo.setStyleSheet("""
+            QComboBox {
+                border: 1px solid palette(mid);
+                border-radius: 6px;
+                padding: 4px 8px 4px 10px;
+                background: palette(base);
+                color: palette(text);
+                min-height: 26px;
+            }
+            QComboBox:hover:!disabled { border-color: palette(highlight); }
+            QComboBox:disabled        { color: palette(mid); }
+            QComboBox::drop-down {
+                subcontrol-origin: padding;
+                subcontrol-position: center right;
+                width: 26px;
+                border: none;
+                border-left: 1px solid palette(mid);
+                border-top-right-radius: 6px;
+                border-bottom-right-radius: 6px;
+            }
+            QComboBox QAbstractItemView {
+                border: 1px solid palette(mid);
+                border-radius: 4px;
+                background: palette(base);
+                selection-background-color: palette(highlight);
+                selection-color: palette(highlighted-text);
+                padding: 2px;
+                outline: none;
+            }
+            QComboBox QAbstractItemView::item { padding: 4px 8px; min-height: 24px; }
+        """)
         self._combo.currentIndexChanged.connect(self._on_device_changed)
         dev_row.addWidget(self._combo)
         routing_layout.addLayout(dev_row)
@@ -1255,6 +1286,26 @@ def main():
     app = QApplication(sys.argv)
     app.setWindowIcon(_make_window_icon())
     app.setStyle("Fusion")
+
+    if app.styleHints().colorScheme() == Qt.ColorScheme.Dark:
+        p = QPalette()
+        p.setColor(QPalette.ColorRole.Window,          QColor(53, 53, 53))
+        p.setColor(QPalette.ColorRole.WindowText,      QColor(255, 255, 255))
+        p.setColor(QPalette.ColorRole.Base,            QColor(35, 35, 35))
+        p.setColor(QPalette.ColorRole.AlternateBase,   QColor(53, 53, 53))
+        p.setColor(QPalette.ColorRole.ToolTipBase,     QColor(25, 25, 25))
+        p.setColor(QPalette.ColorRole.ToolTipText,     QColor(255, 255, 255))
+        p.setColor(QPalette.ColorRole.Text,            QColor(255, 255, 255))
+        p.setColor(QPalette.ColorRole.Button,          QColor(53, 53, 53))
+        p.setColor(QPalette.ColorRole.ButtonText,      QColor(255, 255, 255))
+        p.setColor(QPalette.ColorRole.Link,            QColor(42, 130, 218))
+        p.setColor(QPalette.ColorRole.Highlight,       QColor(42, 130, 218))
+        p.setColor(QPalette.ColorRole.HighlightedText, QColor(0, 0, 0))
+        p.setColor(QPalette.ColorRole.PlaceholderText, QColor(170, 170, 170))
+        p.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Text,       QColor(127, 127, 127))
+        p.setColor(QPalette.ColorGroup.Disabled, QPalette.ColorRole.ButtonText, QColor(127, 127, 127))
+        app.setPalette(p)
+
     app.setQuitOnLastWindowClosed(False)   # keep alive when window is hidden
 
     win = MainWindow()

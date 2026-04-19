@@ -7,3 +7,4 @@ Type=Application
 Categories=Utility;
 Keywords=govee;led;hyperion;hyperhdr;ambient;
 StartupNotify=false
+X-GNOME-UsesNotifications=true
